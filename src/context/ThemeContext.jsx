@@ -84,7 +84,8 @@ export const languages = {
     confirmClearHistory: "确定要清空所有历史记录吗？",
     imagesSelected: "已选择 {count} 张图片",
     processing: "正在处理中...",
-    maxHistoryRecords: "最多 100 条历史记录"
+    maxHistoryRecords: "最多 100 条历史记录",
+    visitWeb: "访问网页版",
   },
   en: {
     appName: "ReaText",
@@ -132,7 +133,7 @@ export const languages = {
     page: "Page",
     addImage: "Add Image",
     selectImagesInfo: "Please select images to recognize (up to 9)",
-    batchHint: "Supports multiple images and PDF documents; batch processing for efficiency",
+    batchHint: "Supports multiple images; batch processing for efficiency",
     preprocessingOptions: "Image Processing Options",
     contrast: "Contrast",
     brightness: "Brightness",
@@ -163,7 +164,8 @@ export const languages = {
     confirmClearHistory: "Are you sure you want to clear all history records?",
     imagesSelected: "Selected {count} images",
     processing: "processing...",
-    maxHistoryRecords: "Maximum of 100 history records"
+    maxHistoryRecords: "Maximum of 100 history records",
+    visitWeb: "Visit Web Version",
   },
   'ms-MY': {
     appName: "ReaText",
@@ -211,7 +213,7 @@ export const languages = {
     page: "Halaman",
     addImage: "Tambah Imej",
     selectImagesInfo: "Sila pilih imej untuk diimbas (maksimum 9)",
-    batchHint: "Menyokong berbilang imej dan dokumen PDF; pemprosesan kumpulan untuk kecekapan",
+    batchHint: "Menyokong berbilang imej; pemprosesan kumpulan untuk kecekapan",
     preprocessingOptions: "Pilihan Pra-pemprosesan Imej",
     contrast: "Kontras",
     brightness: "Kecerahan",
@@ -242,7 +244,8 @@ export const languages = {
     confirmClearHistory: "Adakah anda pasti mahu mengosongkan semua rekod sejarah?",
     imagesSelected: "Dipilih {count} imej",
     processing: "sedang memproses...",
-    maxHistoryRecords: "Maksimum 100 rekod sejarah"
+    maxHistoryRecords: "Maksimum 100 rekod sejarah",
+    visitWeb: "Lawati Versi Web",
   },
   'hi-MY': {
     appName: "ReaText",
@@ -290,7 +293,7 @@ export const languages = {
     page: "पृष्ठ",
     addImage: "इमेज जोड़ें",
     selectImagesInfo: "पहचान के लिए इमेज चुनें (अधिकतम 9)",
-    batchHint: "कई छवियों और PDF दस्तावेजों का समर्थन करें; कुशलता के लिए बैच प्रोसेसिंग",
+    batchHint: "कई छवियों का समर्थन करें; दक्षता के लिए बैच प्रसंस्करण",
     preprocessingOptions: "छवि प्रसंस्करण विकल्प",
     contrast: "विपरीतता",
     brightness: "उज्ज्वलता",
@@ -321,7 +324,8 @@ export const languages = {
     confirmClearHistory: "क्या आप वाकई सभी इतिहास रिकॉर्ड साफ़ करना चाहते हैं?",
     imagesSelected: "{count} छवियाँ चुनी गईं",
     processing: "प्रक्रिया चल रही है...",
-    maxHistoryRecords: "अधिकतम 100 इतिहास रिकॉर्ड"
+    maxHistoryRecords: "अधिकतम 100 इतिहास रिकॉर्ड",
+    visitWeb: "वेब संस्करण देखें",
   }
 };
 
