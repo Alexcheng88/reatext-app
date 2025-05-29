@@ -1,0 +1,318 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import 'react-image-crop/dist/ReactCrop.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300;
+}
+
+.btn-primary {
+  @apply bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-xl shadow-md transition-all duration-300 dark:bg-blue-600 dark:hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply bg-white hover:bg-gray-100 text-blue-500 border border-blue-500 font-medium py-2 px-6 rounded-xl shadow-sm transition-all duration-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-blue-400 dark:border-blue-400;
+}
+
+.btn-icon {
+  @apply p-2 rounded-full transition-all duration-300 hover:bg-blue-50 dark:hover:bg-gray-800;
+}
+
+.camera-btn {
+  @apply bg-white dark:bg-gray-800 rounded-full p-6 flex items-center justify-center shadow-lg transition-transform duration-300;
+}
+
+.camera-btn:hover {
+  @apply transform scale-105;
+}
+
+.camera-btn:active {
+  @apply transform scale-95;
+}
+
+.settings-icon {
+  @apply transition-transform duration-300;
+}
+
+.settings-icon:hover {
+  @apply transform rotate-90;
+}
+
+.navbar {
+  @apply bg-white bg-opacity-90 backdrop-blur-md shadow-sm dark:bg-gray-900 dark:bg-opacity-90 dark:shadow-gray-950;
+}
+
+.result-card {
+  @apply bg-white rounded-xl shadow-md p-6 dark:bg-gray-800 dark:shadow-gray-950;
+}
+
+.loading-wave {
+  @apply flex justify-center items-center space-x-1;
+}
+
+.loading-wave div {
+  @apply w-2 h-8 bg-blue-400 dark:bg-blue-500 rounded-full;
+  animation: wave 1s infinite ease-in-out;
+}
+
+.loading-wave div:nth-child(1) { animation-delay: 0s; }
+.loading-wave div:nth-child(2) { animation-delay: 0.1s; }
+.loading-wave div:nth-child(3) { animation-delay: 0.2s; }
+.loading-wave div:nth-child(4) { animation-delay: 0.3s; }
+.loading-wave div:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave {
+  0%, 40%, 100% { transform: scaleY(0.4); }
+  20% { transform: scaleY(1); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.copied-message {
+  animation: flyUp 2s forwards;
+  @apply fixed left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg;
+}
+
+@keyframes flyUp {
+  0% { bottom: -50px; opacity: 0; }
+  20% { bottom: 100px; opacity: 1; }
+  80% { bottom: 120px; opacity: 1; }
+  100% { bottom: 150px; opacity: 0; }
+}
+
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+
+.ripple:active:after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+.page-transition {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.camera-glow {
+  @apply relative;
+}
+
+.camera-glow:before {
+  content: '';
+  @apply absolute w-full h-full rounded-full bg-blue-400 dark:bg-blue-600 -z-10;
+  filter: blur(15px);
+  opacity: 0.3;
+}
+
+/* 添加新动画效果 */
+.hover-float {
+  transition: transform 0.3s ease;
+}
+
+.hover-float:hover {
+  transform: translateY(-5px);
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.zoom-in {
+  animation: zoomIn 0.5s ease forwards;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.slide-right {
+  animation: slideRight 0.5s ease forwards;
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 图片缩略图网格布局 */
+.image-grid {
+  @apply grid gap-2;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+}
+
+/* 可点击卡片效果 */
+.clickable-card {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm transition-all duration-300;
+}
+
+.clickable-card:hover {
+  @apply shadow-md transform scale-[1.02];
+}
+
+.clickable-card:active {
+  @apply transform scale-[0.98];
+}
+
+/* 翻译选项卡样式 */
+.language-tab {
+  @apply px-4 py-2 border-b-2 border-transparent font-medium transition-all;
+}
+
+.language-tab.active {
+  @apply border-blue-500 text-blue-600 dark:text-blue-400;
+}
+
+.language-tab:hover:not(.active) {
+  @apply border-blue-200 text-blue-500 dark:border-blue-700 dark:text-blue-400;
+}
+
+.translation-appear {
+  animation: fadeSlideUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-out {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* 语言选择样式 */
+.language-option {
+  @apply transition-transform duration-300;
+}
+
+.language-option:hover {
+  @apply transform scale-[1.02];
+}
+
+.language-option:active {
+  @apply transform scale-[0.98];
+}
+
+/* 离线模式样式 */
+.offline-banner {
+  @apply bg-yellow-500 text-white text-center py-2 px-4 font-medium fixed top-16 inset-x-0 z-40;
+  animation: slideDown 0.3s ease-in-out;
+}
+
+@keyframes slideDown {
+  from { 
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.switch {
+  @apply relative inline-block w-12 h-6;
+}
+
+.switch input {
+  @apply opacity-0 w-0 h-0;
+}
+
+.slider {
+  @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 dark:bg-gray-600 transition-all duration-300 rounded-full;
+}
+
+.slider:before {
+  @apply absolute h-4 w-4 left-1 bottom-1 bg-white transition-all duration-300 rounded-full content-[''];
+}
+
+input:checked + .slider {
+  @apply bg-blue-500;
+}
+
+input:checked + .slider:before {
+  @apply transform translate-x-6;
+}
+
+.offline-card {
+  @apply border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-600 p-4;
+}
+  
