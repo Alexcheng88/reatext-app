@@ -2,7 +2,7 @@
     import React, { useState, useEffect } from 'react';
     import { ArrowLeft, Mail, AlertCircle, CheckCircle } from 'lucide-react';
     import { Link, useNavigate } from 'react-router-dom';
-    import supabase from '../lib/supabase';
+    //import supabase from '../lib/supabase';
 
     const LoginPage = () => {
       const [email, setEmail] = useState('');
@@ -15,17 +15,17 @@
       const [countdown, setCountdown] = useState(0);
       const navigate = useNavigate();
 
-      useEffect(() => {
+      //useEffect(() => {
         // 检查用户是否已登录
-        const checkUser = async () => {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            navigate('/');
-          }
-        };
+      //  const checkUser = async () => {
+      //   const { data: { session } } = await supabase.auth.getSession();
+      //    if (session) {
+      //      navigate('/');
+      //    }
+      //  };
         
-        checkUser();
-      }, [navigate]);
+      //  checkUser();
+      //}, [navigate]);
 
       useEffect(() => {
         let timer;
@@ -78,11 +78,11 @@
         setIsVerifying(true);
         
         try {
-          const { error } = await supabase.auth.verifyOtp({
-            email,
-            token: verifyCode,
-            type: 'email'
-          });
+      //    const { error } = await supabase.auth.verifyOtp({
+      //      email,
+      //      token: verifyCode,
+      //      type: 'email'
+      //   });
           
           if (error) {
             throw error;
