@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import { reactComponentTagger } from 'react-component-tagger';
 
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [
     react(),
     reactComponentTagger()
