@@ -6,12 +6,12 @@ import UploadPage      from './pages/UploadPage';
 import ResultPage      from './pages/ResultPage';
 import HistoryPage     from './pages/HistoryPage';
 import BatchPage       from './pages/BatchPage';
-import BatchResult     from './pages/BatchResult';    // ← 新增这一行
+import BatchResult from './pages/BatchResult.jsx';
 import LoginPage       from './pages/LoginPage';
 import OfflineModePage from './pages/OfflineModePage';
 import { ThemeProvider } from './context/ThemeContext';
 import CropPage        from './pages/CropPage';
-import PdfResult from './pages/PdfResult';
+import PdfResult from './pages/PdfResult.jsx';
 
 export const App = () => {
   return (
@@ -25,7 +25,7 @@ export const App = () => {
           <Route path="/result"       element={<ResultPage />} />
           <Route path="/history"      element={<HistoryPage />} />
           <Route path="/batch"        element={<BatchPage />} />
-          <Route path="/batchResult"  element={<BatchResult />} />  {/* ← 新增这个路由 */}
+          <Route path="/batchResult"  element={<BatchResult />} />
           <Route path="/login"        element={<LoginPage />} />
           <Route path="/offline"      element={<OfflineModePage />} />
           <Route path="/pdf-result" element={<PdfResult />} />

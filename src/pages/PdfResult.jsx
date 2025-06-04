@@ -57,49 +57,14 @@ const PdfResult = () => {
 
       {/* 网格布局：1-3 列自适应 */}
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-        {results.map(r => (
-          <div
+        {results.map((r) => (
+          <ResultCard
             key={r.id}
-            className="flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow p-6"
-          >
-            {/* 页眉：页码 + 操作按钮 */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                {`${t.pagePrefix}${r.pageNumber}${t.pageSuffix}`}
-              </h2>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleCopy(r.text)}
-                  className="text-blue-500 hover:text-blue-700"
-                  title={t.copyAll}
-                >
-                  <Copy size={16} />
-                </button>
-                <button
-                  onClick={() => handleTranslate(r.text, r.pageNumber)}
-                  className="text-green-500 hover:text-green-700 text-sm"
-                >
-                  {t.translateText}
-                </button>
-              </div>
-            </div>
-
-            {/* 文本内容区，可滚动 */}
-            <div className="flex-1 overflow-auto mb-4">
-              <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-200">
-                {r.text}
-              </pre>
-            </div>
-
-            {/* 翻译结果 */}
-            {translations[r.pageNumber] && (
-              <div className="mt-auto bg-gray-100 dark:bg-gray-700 p-3 rounded">
-                <pre className="whitespace-pre-wrap text-gray-600 dark:text-gray-300">
-                  {translations[r.pageNumber]}
-                </pre>
-              </div>
-            )}
-          </div>
+            text={r.text}
+            // PDF 情况下，没有图片，也无需 onRetake
+            // image 和 originalImage 不传，ResultCard 会跳过展示图片部分
+            // onRetake 不传，就不渲染「重拍/重选」按钮
+          />
         ))}
       </div>
     </div>

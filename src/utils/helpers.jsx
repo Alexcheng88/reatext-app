@@ -199,6 +199,7 @@ export const getOfflineHistoryRecords = getHistoryRecords;
 
 /** 保存一条历史到 localStorage，并限长 */
 export const saveToHistory = (imageUrl, textContent) => {
+  console.log('>>> 当前 HISTORY_LIMIT =', HISTORY_LIMIT);
   const offline = JSON.parse(localStorage.getItem('offlineHistory') || '[]');
   offline.push({
     id: Date.now(),
