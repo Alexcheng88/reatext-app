@@ -1,6 +1,5 @@
 // src/pages/HomePage.jsx
-
-import React, { useState, useRef } from 'react'; 
+import React, { useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import CameraButton from '../components/CameraButton';
 import BatchUpload from '../components/BatchUpload';
@@ -8,28 +7,39 @@ import { History, GridIcon, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { extractAllPdfPages } from '../utils/helpers';
+import { Browser } from '@capacitor/browser';
 
 const HomePage = () => {
   const { isOnline, t } = useTheme();
   const fileInputRef = useRef(null);
 
-  // null: 尚未选过 PDF；[] 或 >0 数组：已选过
+  // PDF 处理状态
   const [pdfPages, setPdfPages] = useState(null);
   const [pdfResults, setPdfResults] = useState([]);
 
+  // 打开文件选择
   const handleIconClick = () => fileInputRef.current?.click();
 
+  // 处理 PDF 选择
   const handlePdfSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
       const pages = await extractAllPdfPages(file);
       setPdfPages(pages);
-      // 清空上一次结果
       setPdfResults([]);
     } catch (err) {
       console.error('PDF 提取失败：', err);
       alert('无法处理该 PDF，请检查文件或重试');
+    }
+  };
+
+  // 打开外部链接（Web 或 原生）
+  const openExternal = async (url) => {
+    if (typeof window !== 'undefined' && window.open) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      await Browser.open({ url });
     }
   };
 
@@ -91,7 +101,7 @@ const HomePage = () => {
           onChange={handlePdfSelect}
         />
 
-        {/* 如果选中了 PDF，显示 BatchUpload 并自动开始 */}
+        {/* PDF 识别结果 */}
         {pdfPages?.length > 0 && (
           <div className="w-full max-w-2xl mx-auto mt-8">
             <BatchUpload
@@ -102,11 +112,10 @@ const HomePage = () => {
           </div>
         )}
 
-        {/* 显示 OCR 结果 */}
         {pdfResults.length > 0 && (
           <div className="w-full max-w-2xl mx-auto mt-6">
             <h2 className="text-xl font-semibold mb-4">PDF 识别结果</h2>
-            {pdfResults.map(r => (
+            {pdfResults.map((r) => (
               <div
                 key={r.id}
                 className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow"
@@ -132,12 +141,18 @@ const HomePage = () => {
       <footer className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
         <p>{t.copyright}</p>
         <div className="flex justify-center mt-3 space-x-4">
-          <a href="#" className="hover:text-blue-500">
+          <button
+            onClick={() => openExternal('https://Alexcheng88.github.io/reatext-legal/privacy-policy.html')}
+            className="hover:text-blue-500 underline"
+          >
             {t.privacyPolicy}
-          </a>
-          <a href="#" className="hover:text-blue-500">
+          </button>
+          <button
+            onClick={() => openExternal('https://Alexcheng88.github.io/reatext-legal/terms-of-service.html')}
+            className="hover:text-blue-500 underline"
+          >
             {t.termsConditions}
-          </a>
+          </button>
         </div>
       </footer>
     </div>
