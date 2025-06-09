@@ -9,7 +9,7 @@ export const ThemeContext = createContext();
 export const languages = {
   zh: {
     appName: "ReaText",
-    tagline: "拍照识别",
+    tagline: "Read , Ready , Reap Text",
     takePhoto: "拍照",
     uploadImage: "上传图片",
     batchRecognition: "批量识别",
@@ -89,7 +89,7 @@ export const languages = {
   },
   en: {
     appName: "ReaText",
-    tagline: "Scan Text instantly",
+    tagline: "Read , Ready , Reap Text",
     takePhoto: "Camera",
     uploadImage: "Upload Image",
     batchRecognition: "Batch Recognition",
@@ -169,7 +169,7 @@ export const languages = {
   },
   'ms-MY': {
     appName: "ReaText",
-    tagline: "Imbas Teks Serta-merta",
+    tagline: "Read , Ready , Reap Text",
     takePhoto: "Kamera",
     uploadImage: "Muat Naik",
     batchRecognition: "Imbasan Kumpulan",
@@ -249,7 +249,7 @@ export const languages = {
   },
   'hi-MY': {
     appName: "ReaText",
-    tagline: "पाठ तुरंत स्कैन करें",
+    tagline: "Read , Ready , Reap Text",
     takePhoto: "कैमरा",
     uploadImage: "अपलोड इमेज",
     batchRecognition: "बैच स्कैन",

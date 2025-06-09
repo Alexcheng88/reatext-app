@@ -195,7 +195,12 @@ export const getHistoryRecords = () => {
 };
 
 /** 获取离线历史（同 getHistoryRecords） */
-export const getOfflineHistoryRecords = getHistoryRecords;
+export const getOfflineHistoryRecords = () => {
+  const offline = JSON.parse(localStorage.getItem('offlineHistory') || '[]');
+  return offline
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, HISTORY_LIMIT);
+};
 
 /** 保存一条历史到 localStorage，并限长 */
 export const saveToHistory = (imageUrl, textContent) => {
