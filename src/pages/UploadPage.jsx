@@ -1,7 +1,7 @@
-// src/pages/UploadPage.jsx
+// src/pages/UploadPage.jsx （上传图片）
 
 import React, { useState, useRef } from 'react';
-import { ArrowLeft, FileType, X } from 'lucide-react';
+import { ArrowLeft, FileType, X, RotateCw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ImageProcessingOptions from '../components/ImageProcessingOptions';
 import { useTheme } from '../context/ThemeContext';
@@ -39,17 +39,41 @@ const UploadPage = () => {
   const navigate = useNavigate();
   const { t } = useTheme();
 
+  // Helper: 把 dataURL 按指定角度旋转，返回新的 dataURL
+  const rotateDataUrl = (dataUrl, degrees) => {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        // 如果旋转 90 或 270 度，则交换画布宽高
+        if (degrees % 180 !== 0) {
+          canvas.width = img.height;
+          canvas.height = img.width;
+        } else {
+          canvas.width = img.width;
+          canvas.height = img.height;
+        }
+        // 平移到中心并旋转
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((degrees * Math.PI) / 180);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        resolve(canvas.toDataURL());
+      };
+      img.src = dataUrl;
+    });
+  };
+
   const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // PDF 立即识别
+    // PDF 立即识别逻辑不变...
     if (file.type === 'application/pdf') {
       setIsProcessing(true);
       try {
         const pages = await extractAllPdfPages(file);
         const results = [];
-
         for (let idx = 0; idx < pages.length; idx++) {
           const pageDataUrl = pages[idx];
           const compressed = await resizeAndCompress(pageDataUrl, {
@@ -70,7 +94,6 @@ const UploadPage = () => {
             pageNumber: idx + 1
           });
         }
-
         navigate('/batchResult', { state: { results } });
       } catch (err) {
         console.error(t.pdfProcessingError, err);
@@ -81,11 +104,13 @@ const UploadPage = () => {
       return;
     }
 
-    // 图片逻辑
+    // 图片逻辑：读取 dataURL，设置 preview
     if (file.type.startsWith('image/')) {
       setSelectedFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
       reader.readAsDataURL(file);
     } else {
       alert(t.selectFileAlert);
@@ -94,6 +119,7 @@ const UploadPage = () => {
 
   const handleUpload = () => {
     if (!selectedFile || isProcessing) return;
+    // 传给下一个页面的就是 preview，所以会用到旋转后的图像
     navigate('/result', {
       state: {
         image: preview,
@@ -109,9 +135,7 @@ const UploadPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
       <div className="navbar p-4 flex items-center">
-        <Link to="/" className="btn-icon">
-          <ArrowLeft size={24} />
-        </Link>
+        <Link to="/" className="btn-icon"><ArrowLeft size={24} /></Link>
         <h1 className="text-gray-800 dark:text-gray-200 text-lg font-medium ml-4">
           {t.uploadImage}
         </h1>
@@ -128,6 +152,7 @@ const UploadPage = () => {
                 alt={t.previewAlt}
                 className="w-full h-64 object-contain bg-gray-100 dark:bg-gray-800 rounded-xl"
               />
+              {/* 清除按钮 */}
               <button
                 className="absolute bottom-4 right-4 btn-icon bg-white dark:bg-gray-700 shadow-md"
                 onClick={() => {
@@ -136,6 +161,16 @@ const UploadPage = () => {
                 }}
               >
                 <X size={20} />
+              </button>
+              {/* 旋转按钮：更新 preview 为旋转后新的 dataURL */}
+              <button
+                className="absolute top-4 right-4 btn-icon bg-white dark:bg-gray-700 shadow-md"
+                onClick={async () => {
+                  const rotated = await rotateDataUrl(preview, 90);
+                  setPreview(rotated);
+                }}
+              >
+                <RotateCw size={20} />
               </button>
             </div>
           ) : (
