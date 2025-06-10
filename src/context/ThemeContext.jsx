@@ -9,7 +9,7 @@ export const ThemeContext = createContext();
 export const languages = {
   zh: {
     appName: "ReaText",
-    tagline: "Read , Ready , Reap Text",
+    tagline: "Read. Ready. Reap.",
     takePhoto: "拍照",
     uploadImage: "上传图片",
     batchRecognition: "批量识别",
@@ -86,10 +86,11 @@ export const languages = {
     processing: "正在处理中...",
     maxHistoryRecords: "最多 100 条历史记录",
     visitWeb: "访问网页版",
+    confirm: "确认",
   },
   en: {
     appName: "ReaText",
-    tagline: "Read , Ready , Reap Text",
+    tagline: "Read. Ready. Reap.",
     takePhoto: "Camera",
     uploadImage: "Upload Image",
     batchRecognition: "Batch Recognition",
@@ -166,10 +167,11 @@ export const languages = {
     processing: "processing...",
     maxHistoryRecords: "Maximum of 100 history records",
     visitWeb: "Visit Web Version",
+    confirm: "Confirm",
   },
   'ms-MY': {
     appName: "ReaText",
-    tagline: "Read , Ready , Reap Text",
+    tagline: "Read. Ready. Reap.",
     takePhoto: "Kamera",
     uploadImage: "Muat Naik",
     batchRecognition: "Imbasan Kumpulan",
@@ -246,10 +248,11 @@ export const languages = {
     processing: "sedang memproses...",
     maxHistoryRecords: "Maksimum 100 rekod sejarah",
     visitWeb: "Lawati Versi Web",
+    confirm: "Sahkan",
   },
   'hi-MY': {
     appName: "ReaText",
-    tagline: "Read , Ready , Reap Text",
+    tagline: "Read. Ready. Reap.",
     takePhoto: "कैमरा",
     uploadImage: "अपलोड इमेज",
     batchRecognition: "बैच स्कैन",
@@ -326,6 +329,7 @@ export const languages = {
     processing: "प्रक्रिया चल रही है...",
     maxHistoryRecords: "अधिकतम 100 इतिहास रिकॉर्ड",
     visitWeb: "वेब संस्करण देखें",
+    confirm: "पुष्टि करें",
   }
 };
 

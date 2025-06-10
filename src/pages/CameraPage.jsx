@@ -1,8 +1,10 @@
 // src/pages/CameraPage.jsx
 
 import React, { useRef, useState, useEffect } from 'react';
-import { ArrowLeft, RotateCw, X } from 'lucide-react';
+import { ArrowLeft, RotateCw, X, Crop } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import Cropper from 'react-easy-crop';
+import { getCroppedImg } from '../utils/cropUtils';
 import { useTheme } from '../context/ThemeContext';
 import { Capacitor } from '@capacitor/core';
 import {
@@ -15,19 +17,25 @@ const CameraPage = () => {
   const [preview, setPreview] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [rotation, setRotation] = useState(0);
+
+  // Crop states
+  const [isCropping, setIsCropping] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const { t } = useTheme();
   const isNative = Capacitor.isNativePlatform();
 
-  // Helper: 把 dataURL 按指定角度旋转，返回新的 dataURL
+  // Helper: rotate dataURL
   const rotateDataUrl = (dataUrl, degrees) =>
     new Promise(resolve => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        // 如果旋转 90° 或 270°，交换画布宽高
         if (degrees % 180 !== 0) {
           canvas.width = img.height;
           canvas.height = img.width;
@@ -43,6 +51,7 @@ const CameraPage = () => {
       img.src = dataUrl;
     });
 
+  // Process final photo (cropped/rotated)
   const processPhoto = (dataUrl) => {
     navigate('/result', {
       state: {
@@ -95,9 +104,12 @@ const CameraPage = () => {
   };
 
   useEffect(() => {
-    // 原生 App 启动时自动打开相机
     if (isNative) handleTakePhoto();
   }, [isNative]);
+
+  const onCropComplete = (_, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-black">
@@ -111,7 +123,6 @@ const CameraPage = () => {
       </div>
 
       <div className="flex-grow flex flex-col justify-center items-center px-4">
-        {/* 拍照/选图 按钮 */}
         {!preview && (
           <>
             <button
@@ -134,9 +145,48 @@ const CameraPage = () => {
           onChange={handleFileChange}
         />
 
-        {/* 预览 & 控件 */}
         {preview && (
           <div className="w-full max-w-md">
+            {/* Cropping Modal */}
+            {isCropping && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                <div className="bg-white p-4 rounded-lg">
+                  <div className="relative w-[300px] h-[300px] bg-gray-200">
+                    <Cropper
+                      image={preview}
+                      crop={crop}
+                      zoom={zoom}
+                      aspect={4 / 3}
+                      rotation={rotation}
+                      onCropChange={setCrop}
+                      onZoomChange={setZoom}
+                      onCropComplete={onCropComplete}
+                    />
+                  </div>
+                  <div className="mt-4 flex items-center space-x-2">
+                    <input
+                      type="range"
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      value={zoom}
+                      onChange={e => setZoom(e.target.value)}
+                    />
+                    <button onClick={() => setIsCropping(false)}>取消</button>
+                    <button onClick={async () => {
+                      const croppedDataUrl = await getCroppedImg(
+                        preview,
+                        croppedAreaPixels,
+                        rotation
+                      );
+                      setPreview(croppedDataUrl);
+                      setIsCropping(false);
+                    }}>确认</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="relative mb-6 fade-in">
               <img
                 src={preview}
@@ -147,7 +197,6 @@ const CameraPage = () => {
                   transition: 'transform 0.3s ease'
                 }}
               />
-              {/* 清除 */}
               <button
                 className="absolute bottom-4 right-4 btn-icon bg-white dark:bg-gray-700 shadow-md"
                 onClick={() => {
@@ -157,7 +206,12 @@ const CameraPage = () => {
               >
                 <X size={20} />
               </button>
-              {/* 旋转 */}
+              <button
+                className="absolute top-4 right-16 btn-icon bg-white dark:bg-gray-700 shadow-md"
+                onClick={() => setIsCropping(true)}
+              >
+                <Crop size={20} />
+              </button>
               <button
                 className="absolute top-4 right-4 btn-icon bg-white dark:bg-gray-700 shadow-md"
                 onClick={async () => {
@@ -168,6 +222,7 @@ const CameraPage = () => {
                 <RotateCw size={20} />
               </button>
             </div>
+
             <button
               onClick={() => processPhoto(preview)}
               disabled={isProcessing}
