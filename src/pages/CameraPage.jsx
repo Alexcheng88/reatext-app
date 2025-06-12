@@ -2,9 +2,10 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, RotateCw, X, Crop } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '../utils/cropUtils';
+import { Link, useNavigate } from 'react-router-dom';
+import ImageProcessingOptions from '../components/ImageProcessingOptions';
 import { useTheme } from '../context/ThemeContext';
 import { Capacitor } from '@capacitor/core';
 import {
@@ -15,9 +16,17 @@ import {
 
 const CameraPage = () => {
   const [preview, setPreview] = useState(null);
+  const [selectedFromCamera, setSelectedFromCamera] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [rotation, setRotation] = useState(0);
-
+  const [processingOptions, setProcessingOptions] = useState({
+    contrast: 1.2,
+    brightness: 5,
+    sharpness: 0,
+    denoise: false,
+    autoRotate: true,
+  });
+  
   // Crop states
   const [isCropping, setIsCropping] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -29,7 +38,7 @@ const CameraPage = () => {
   const { t } = useTheme();
   const isNative = Capacitor.isNativePlatform();
 
-  // Helper: rotate dataURL
+  // Rotate helper
   const rotateDataUrl = (dataUrl, degrees) =>
     new Promise(resolve => {
       const img = new Image();
@@ -51,17 +60,7 @@ const CameraPage = () => {
       img.src = dataUrl;
     });
 
-  // Process final photo (cropped/rotated)
-  const processPhoto = (dataUrl) => {
-    navigate('/result', {
-      state: {
-        image: dataUrl,
-        fromCamera: true,
-        processingOptions: {}
-      }
-    });
-  };
-
+  // Handle camera or file input
   const handleTakePhoto = async () => {
     if (isProcessing) return;
     if (isNative) {
@@ -75,6 +74,7 @@ const CameraPage = () => {
         });
         setPreview(photo.dataUrl);
         setRotation(0);
+        setSelectedFromCamera(true);
       } catch (err) {
         console.error('拍照失败:', err);
         alert(t.cameraError || '拍照失败，请检查权限');
@@ -94,6 +94,7 @@ const CameraPage = () => {
     reader.onload = () => {
       setPreview(reader.result);
       setRotation(0);
+      setSelectedFromCamera(false);
       setIsProcessing(false);
     };
     reader.onerror = () => {
@@ -107,8 +108,35 @@ const CameraPage = () => {
     if (isNative) handleTakePhoto();
   }, [isNative]);
 
-  const onCropComplete = (_, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
+  const onCropComplete = (_, areaPixels) => {
+    setCroppedAreaPixels(areaPixels);
+  };
+
+  const handleCropConfirm = async () => {
+    if (preview && croppedAreaPixels) {
+      setIsProcessing(true);
+      const croppedUrl = await getCroppedImg(preview, croppedAreaPixels, rotation);
+      setPreview(croppedUrl);
+      setIsCropping(false);
+      setCroppedAreaPixels(null);
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCropCancel = () => {
+    setIsCropping(false);
+    setCroppedAreaPixels(null);
+  };
+
+  // Final navigation to OCR with pre-processing options
+  const processPhoto = (dataUrl) => {
+    navigate('/result', {
+      state: {
+        image: dataUrl,
+        fromCamera: selectedFromCamera,
+        processingOptions: { ...processingOptions, fileType: 'image/*' }
+      }
+    });
   };
 
   return (
@@ -117,12 +145,18 @@ const CameraPage = () => {
         <Link to="/" className="btn-icon text-white">
           <ArrowLeft size={24} />
         </Link>
-        <h1 className="text-white text-lg font-medium ml-4">
-          {t.takePhoto}
-        </h1>
+        <h1 className="text-white text-lg font-medium ml-4">{t.takePhoto}</h1>
       </div>
 
       <div className="flex-grow flex flex-col justify-center items-center px-4">
+        {/* Pre-processing controls */}
+        {preview && (
+          <div className="w-full max-w-md mb-4">
+            <ImageProcessingOptions onOptionsChange={setProcessingOptions} />
+          </div>
+        )}
+
+        {/* Camera/File input button */}
         {!preview && (
           <>
             <button
@@ -145,9 +179,10 @@ const CameraPage = () => {
           onChange={handleFileChange}
         />
 
+        {/* Preview & controls */}
         {preview && (
           <div className="w-full max-w-md">
-            {/* Cropping Modal */}
+            {/* Cropping modal */}
             {isCropping && (
               <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
                 <div className="bg-white p-4 rounded-lg">
@@ -163,25 +198,9 @@ const CameraPage = () => {
                       onCropComplete={onCropComplete}
                     />
                   </div>
-                  <div className="mt-4 flex items-center space-x-2">
-                    <input
-                      type="range"
-                      min={1}
-                      max={3}
-                      step={0.1}
-                      value={zoom}
-                      onChange={e => setZoom(e.target.value)}
-                    />
-                    <button onClick={() => setIsCropping(false)}>取消</button>
-                    <button onClick={async () => {
-                      const croppedDataUrl = await getCroppedImg(
-                        preview,
-                        croppedAreaPixels,
-                        rotation
-                      );
-                      setPreview(croppedDataUrl);
-                      setIsCropping(false);
-                    }}>确认</button>
+                  <div className="mt-4 flex justify-end space-x-2">
+                    <button onClick={handleCropCancel}>{t.cancel}</button>
+                    <button onClick={handleCropConfirm} disabled={isProcessing}>{t.confirm}</button>
                   </div>
                 </div>
               </div>
@@ -192,32 +211,23 @@ const CameraPage = () => {
                 src={preview}
                 alt={t.previewAlt}
                 className="w-full h-64 object-contain rounded-xl"
-                style={{
-                  transform: `rotate(${rotation}deg)`,
-                  transition: 'transform 0.3s ease'
-                }}
+                style={{ transform: `rotate(${rotation}deg)`, transition: 'transform 0.3s ease' }}
               />
               <button
                 className="absolute bottom-4 right-4 btn-icon bg-white dark:bg-gray-700 shadow-md"
-                onClick={() => {
-                  setPreview(null);
-                  setRotation(0);
-                }}
+                onClick={() => { setPreview(null); setRotation(0); }}
               >
                 <X size={20} />
               </button>
               <button
-                className="absolute top-4 right-16 btn-icon bg-white dark:bg-gray-700 shadow-md"
+                className="absolute top-4 right-20 btn-icon bg-white dark:bg-gray-700 shadow-md"
                 onClick={() => setIsCropping(true)}
               >
                 <Crop size={20} />
               </button>
               <button
                 className="absolute top-4 right-4 btn-icon bg-white dark:bg-gray-700 shadow-md"
-                onClick={async () => {
-                  const rotated = await rotateDataUrl(preview, 90);
-                  setPreview(rotated);
-                }}
+                onClick={async () => { const rotated = await rotateDataUrl(preview, 90); setPreview(rotated); }}
               >
                 <RotateCw size={20} />
               </button>
