@@ -87,6 +87,9 @@ export const languages = {
     maxHistoryRecords: "最多 100 条历史记录",
     visitWeb: "访问网页版",
     confirm: "确认",
+    photoFailed:            "拍照失败",
+    photoFailedPermission:  "拍照失败，请检查权限",
+    fileReadFailed:         "读取文件失败",
   },
   en: {
     appName: "ReaText",
@@ -168,6 +171,9 @@ export const languages = {
     maxHistoryRecords: "Maximum of 100 history records",
     visitWeb: "Visit Web Version",
     confirm: "Confirm",
+    photoFailed:            "Capture failed",
+    photoFailedPermission:  "Capture failed; please check permissions",
+    fileReadFailed:         "Failed to read file",
   },
   'ms-MY': {
     appName: "ReaText",
@@ -249,6 +255,9 @@ export const languages = {
     maxHistoryRecords: "Maksimum 100 rekod sejarah",
     visitWeb: "Lawati Versi Web",
     confirm: "Sahkan",
+    photoFailed:            "Tangkap gagal",
+    photoFailedPermission:  "Tangkap gagal; sila semak kebenaran",
+    fileReadFailed:         "Gagal membaca fail",
   },
   'hi-MY': {
     appName: "ReaText",
@@ -330,6 +339,9 @@ export const languages = {
     maxHistoryRecords: "अधिकतम 100 इतिहास रिकॉर्ड",
     visitWeb: "वेब संस्करण देखें",
     confirm: "पुष्टि करें",
+    photoFailed:            "कैप्चर विफल",
+    photoFailedPermission:  "कैप्चर विफल; कृपया अनुमतियों की जांच करें",
+    fileReadFailed:         "फ़ाइल पढ़ने में विफल",
   }
 };
 

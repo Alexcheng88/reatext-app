@@ -26,8 +26,8 @@ const CameraPage = () => {
     denoise: false,
     autoRotate: true,
   });
-  
-  // Crop states
+
+  // Cropping states
   const [isCropping, setIsCropping] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -38,7 +38,7 @@ const CameraPage = () => {
   const { t } = useTheme();
   const isNative = Capacitor.isNativePlatform();
 
-  // Rotate helper
+  // Helper to rotate Data URL
   const rotateDataUrl = (dataUrl, degrees) =>
     new Promise(resolve => {
       const img = new Image();
@@ -60,7 +60,7 @@ const CameraPage = () => {
       img.src = dataUrl;
     });
 
-  // Handle camera or file input
+  // Capture photo
   const handleTakePhoto = async () => {
     if (isProcessing) return;
     if (isNative) {
@@ -76,8 +76,8 @@ const CameraPage = () => {
         setRotation(0);
         setSelectedFromCamera(true);
       } catch (err) {
-        console.error('拍照失败:', err);
-        alert(t.cameraError || '拍照失败，请检查权限');
+        console.error(t.photoFailed, err);
+        alert(t.cameraError || t.photoFailedPermission);
       } finally {
         setIsProcessing(false);
       }
@@ -86,6 +86,7 @@ const CameraPage = () => {
     }
   };
 
+  // Handle file selection fallback
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -98,12 +99,13 @@ const CameraPage = () => {
       setIsProcessing(false);
     };
     reader.onerror = () => {
-      alert(t.fileReadError || '读取文件失败');
+      alert(t.fileReadError || t.fileReadFailed);
       setIsProcessing(false);
     };
     reader.readAsDataURL(file);
   };
 
+  // Auto open camera on native
   useEffect(() => {
     if (isNative) handleTakePhoto();
   }, [isNative]);
@@ -128,7 +130,7 @@ const CameraPage = () => {
     setCroppedAreaPixels(null);
   };
 
-  // Final navigation to OCR with pre-processing options
+  // Navigate to result with options
   const processPhoto = (dataUrl) => {
     navigate('/result', {
       state: {
@@ -149,14 +151,14 @@ const CameraPage = () => {
       </div>
 
       <div className="flex-grow flex flex-col justify-center items-center px-4">
-        {/* Pre-processing controls */}
+        {/* Pre-processing options */}
         {preview && (
           <div className="w-full max-w-md mb-4">
             <ImageProcessingOptions onOptionsChange={setProcessingOptions} />
           </div>
         )}
 
-        {/* Camera/File input button */}
+        {/* Camera/file button */}
         {!preview && (
           <>
             <button
@@ -179,10 +181,10 @@ const CameraPage = () => {
           onChange={handleFileChange}
         />
 
-        {/* Preview & controls */}
+        {/* Preview and controls */}
         {preview && (
           <div className="w-full max-w-md">
-            {/* Cropping modal */}
+            {/* Cropping Modal */}
             {isCropping && (
               <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
                 <div className="bg-white p-4 rounded-lg">
@@ -198,9 +200,21 @@ const CameraPage = () => {
                       onCropComplete={onCropComplete}
                     />
                   </div>
-                  <div className="mt-4 flex justify-end space-x-2">
-                    <button onClick={handleCropCancel}>{t.cancel}</button>
-                    <button onClick={handleCropConfirm} disabled={isProcessing}>{t.confirm}</button>
+                  {/* Zoom slider and actions */}
+                  <div className="mt-4 space-y-2">
+                    <input
+                      type="range"
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      value={zoom}
+                      onChange={e => setZoom(e.target.value)}
+                      className="w-full"
+                    />
+                    <div className="flex justify-end space-x-2">
+                      <button onClick={handleCropCancel}>{t.cancel}</button>
+                      <button onClick={handleCropConfirm} disabled={isProcessing}>{t.confirm}</button>
+                    </div>
                   </div>
                 </div>
               </div>
