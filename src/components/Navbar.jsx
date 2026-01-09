@@ -139,17 +139,19 @@ const Navbar = () => {
               </Link>
 
 
-
+              
               <a
                 href="https://reatext-app.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 p-2 rounded-md hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
                 onClick={() => setShowSettings(false)}
-              >
+                >
                 <ExternalLink size={16} className="mr-2" />
-                <span>{t.visitWeb || '访问网页版'}</span>
+                <span>{t.visitWeb}</span>
                 </a>
+
+              
             </div>
           </div>
         </div>

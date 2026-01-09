@@ -45,7 +45,7 @@ export const applyImageProcessing = async (imageBase64, options = {}) => {
     denoise = false,
   } = options;
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
       const maxWidth = 1800;
@@ -66,28 +66,28 @@ export const applyImageProcessing = async (imageBase64, options = {}) => {
 
       // 亮度 & 对比度
       for (let i = 0; i < data.length; i += 4) {
-        data[i]   = Math.min(255, Math.max(0, (data[i]   - 128) * contrast + 128 + brightness));
-        data[i+1] = Math.min(255, Math.max(0, (data[i+1] - 128) * contrast + 128 + brightness));
-        data[i+2] = Math.min(255, Math.max(0, (data[i+2] - 128) * contrast + 128 + brightness));
+        data[i]   = Math.min(255, Math.max(0, (data[i]   - 128)*contrast + 128 + brightness));
+        data[i+1] = Math.min(255, Math.max(0, (data[i+1] - 128)*contrast + 128 + brightness));
+        data[i+2] = Math.min(255, Math.max(0, (data[i+2] - 128)*contrast + 128 + brightness));
       }
 
       // 简单锐化
       if (sharpness > 0) {
         const tmp = new Uint8ClampedArray(data);
-        const kernel = [0, -1, 0, -1, 5, -1, 0, -1, 0];
-        const factor = 1 + sharpness / 10;
-        for (let y = 1; y < h - 1; y++) {
-          for (let x = 1; x < w - 1; x++) {
-            const idx = (y * w + x) * 4;
+        const kernel = [0,-1,0,-1,5,-1,0,-1,0];
+        const factor = 1 + sharpness/10;
+        for (let y = 1; y < h-1; y++) {
+          for (let x = 1; x < w-1; x++) {
+            const idx = (y*w + x)*4;
             for (let c = 0; c < 3; c++) {
               let sum = 0;
               for (let ky = -1; ky <= 1; ky++) {
                 for (let kx = -1; kx <= 1; kx++) {
-                  const k = kernel[(ky + 1) * 3 + (kx + 1)];
-                  sum += k * tmp[idx + (ky * w + kx) * 4 + c];
+                  const k = kernel[(ky+1)*3 + (kx+1)];
+                  sum += k * tmp[idx + (ky*w + kx)*4 + c];
                 }
               }
-              data[idx + c] = Math.min(255, Math.max(0, sum / factor));
+              data[idx + c] = Math.min(255, Math.max(0, sum/factor));
             }
           }
         }
@@ -96,14 +96,14 @@ export const applyImageProcessing = async (imageBase64, options = {}) => {
       // 简单降噪（3x3 均值滤波）
       if (denoise) {
         const tmp = new Uint8ClampedArray(data);
-        for (let y = 1; y < h - 1; y++) {
-          for (let x = 1; x < w - 1; x++) {
-            const idx = (y * w + x) * 4;
+        for (let y = 1; y < h-1; y++) {
+          for (let x = 1; x < w-1; x++) {
+            const idx = (y*w + x)*4;
             for (let c = 0; c < 3; c++) {
               let sum = 0;
               for (let ky = -1; ky <= 1; ky++) {
                 for (let kx = -1; kx <= 1; kx++) {
-                  sum += tmp[idx + (ky * w + kx) * 4 + c];
+                  sum += tmp[idx + (ky*w + kx)*4 + c];
                 }
               }
               data[idx + c] = sum / 9;
@@ -188,13 +188,10 @@ export const translateText = async (text, target = 'en', source = 'zh') => {
   }
 };
 
-/** 获取所有本地历史（最新优先，最多 HISTORY_LIMIT 条） */
+/** 获取所有本地历史（最新优先） */
 export const getHistoryRecords = () => {
   const arr = JSON.parse(localStorage.getItem('offlineHistory') || '[]');
-  // 按时间倒序并取最新 HISTORY_LIMIT 条
-  return arr
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, HISTORY_LIMIT);
+  return arr.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 };
 
 /** 获取离线历史（同 getHistoryRecords） */
@@ -202,17 +199,14 @@ export const getOfflineHistoryRecords = getHistoryRecords;
 
 /** 保存一条历史到 localStorage，并限长 */
 export const saveToHistory = (imageUrl, textContent) => {
-  const arr = JSON.parse(localStorage.getItem('offlineHistory') || '[]');
-  arr.push({
+  const offline = JSON.parse(localStorage.getItem('offlineHistory') || '[]');
+  offline.push({
     id: Date.now(),
     image_url: imageUrl,
     text_content: textContent,
     created_at: new Date().toISOString(),
   });
-  // 保留最新 HISTORY_LIMIT 条
-  const trimmed = arr
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, HISTORY_LIMIT);
+  const trimmed = offline.slice(-HISTORY_LIMIT);
   localStorage.setItem('offlineHistory', JSON.stringify(trimmed));
 };
 
@@ -221,7 +215,7 @@ export const deleteHistoryRecord = (id) => {
   const arr = JSON.parse(localStorage.getItem('offlineHistory') || '[]')
     .filter(r => r.id !== id);
   localStorage.setItem('offlineHistory', JSON.stringify(arr));
-  return true;
+  return true;    // ← 确保返回 true
 };
 
 /** 清空所有本地历史 */
@@ -229,5 +223,7 @@ export const clearAllHistory = () => {
   localStorage.removeItem('offlineHistory');
 };
 
-/** 同步离线数据 —— 本地存储版直接 noop */
-export const syncOfflineData = async () => ({ success: false, count: 0 });
+/** 同步离线数据 —— 由于只用本地存储，这里直接 noop */
+export const syncOfflineData = async () => {
+  return { success: false, count: 0 };
+};

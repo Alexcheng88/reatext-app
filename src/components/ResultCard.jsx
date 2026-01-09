@@ -1,4 +1,3 @@
-// src/components/ResultCard.jsx
 
 import React, { useState } from 'react';
 import { Copy, Camera, Edit2, Globe } from 'lucide-react';
@@ -29,7 +28,7 @@ const ResultCard = ({ text, image, originalImage, onRetake }) => {
       setEditedText(text);
     }
   };
-
+  
   const handleTranslate = () => {
     setShowTranslationModal(true);
   };
@@ -44,9 +43,9 @@ const ResultCard = ({ text, image, originalImage, onRetake }) => {
     <div className="w-full max-w-xl mx-auto fade-in">
       {image && (
         <div className="mb-5 relative">
-          <img
-            src={showOriginalImage ? originalImage : image}
-            alt="识别图片"
+          <img 
+            src={showOriginalImage ? originalImage : image} 
+            alt="识别图片" 
             className="w-full h-48 object-cover rounded-xl shadow-sm cursor-pointer"
             onClick={toggleImageView}
           />
@@ -57,21 +56,19 @@ const ResultCard = ({ text, image, originalImage, onRetake }) => {
           )}
         </div>
       )}
-
+      
       <div className="result-card">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-            {t.recognitionResult}
-          </h3>
+          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">{t.recognitionResult}</h3>
           {!isOnline && (
             <span className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs px-2 py-1 rounded-full flex items-center">
               {t.networkOffline}
             </span>
           )}
         </div>
-
+        
         {isEditing ? (
-          <textarea
+          <textarea 
             value={editedText}
             onChange={(e) => setEditedText(e.target.value)}
             className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 min-h-32 mb-4 text-gray-800 dark:text-gray-200 w-full border border-blue-200 dark:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -82,52 +79,51 @@ const ResultCard = ({ text, image, originalImage, onRetake }) => {
             {text}
           </div>
         )}
-
+        
         <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
-          <button
+          <button 
             onClick={copyToClipboard}
             className="btn-primary flex-1 flex items-center justify-center space-x-2 ripple"
           >
             <Copy size={18} />
             <span>{t.copyAll}</span>
           </button>
-
-          {/* 如果要一键翻译，就把下面这段取消注释 */}
-          {/* <button 
+          
+          {/*
+          <button 
             onClick={handleTranslate}
             className="btn-primary flex-1 flex items-center justify-center space-x-2 ripple"
           >
             <Globe size={18} />
             <span>{t.translateText}</span>
-          </button> */}
-
-         {onRetake && (
-           <button
-             onClick={onRetake}
-             className="btn-secondary flex-1 flex items-center justify-center space-x-2 ripple"
-           >
-             <Camera size={18} />
-             <span>{t.retake}</span>
-           </button>
-         )}
-
-         <button
-           onClick={handleEdit}
-           className="btn-secondary flex-1 flex items-center justify-center space-x-2 ripple"
-         >
-           <Edit2 size={18} />
-           <span>{isEditing ? t.save : t.editText}</span>
-         </button>
+          </button>
+          */}
+          
+          <button 
+            onClick={onRetake}
+            className="btn-secondary flex-1 flex items-center justify-center space-x-2 ripple"
+          >
+            <Camera size={18} />
+            <span>{t.retake}</span>
+          </button>
+          
+          <button 
+            onClick={handleEdit}
+            className="btn-secondary flex-1 flex items-center justify-center space-x-2 ripple"
+          >
+            <Edit2 size={18} />
+            <span>{isEditing ? t.save : t.editText}</span>
+          </button>
         </div>
       </div>
-
+      
       {showCopied && (
         <div className="copied-message">
           {t.copied}
         </div>
       )}
 
-      <TranslationModal
+      <TranslationModal 
         isOpen={showTranslationModal}
         onClose={() => setShowTranslationModal(false)}
         textToTranslate={isEditing ? editedText : text}
@@ -137,3 +133,4 @@ const ResultCard = ({ text, image, originalImage, onRetake }) => {
 };
 
 export default ResultCard;
+  

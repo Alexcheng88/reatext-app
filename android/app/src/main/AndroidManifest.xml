@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    package="com.snaptext.app"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">  
 
     <!-- ✅ 权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-
 
     <application
         android:allowBackup="true"
@@ -16,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- ✅ 启动主界面 -->
+        <!-- ✅ 启动主界面，添加 PDF 文件打开支持 -->
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"
             android:name=".MainActivity"
@@ -24,9 +22,20 @@
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:launchMode="singleTask"
             android:exported="true">
+
+            <!-- 启动 App -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- ✅ 文件打开 intent：支持 application/pdf -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" android:mimeType="application/pdf" />
+                <data android:scheme="content" android:mimeType="application/pdf" />
             </intent-filter>
         </activity>
 
@@ -43,7 +52,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:exported="false" />
 
-        <!-- ✅ 文件读取授权（如果将来需要保存图片等） -->
+        <!-- ✅ 文件读取授权（用于保存图片或分享） -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -55,5 +64,4 @@
         </provider>
 
     </application>
-
 </manifest>
